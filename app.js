@@ -211,7 +211,14 @@ function analyse(text){
   const nums = claimNumbers(text);
 
   const ranked = allStats.map(s => ({s, sc: scoreStat(s, ws)})).filter(x => x.sc >= 2).sort((a, b) => b.sc - a.sc);
-  const stats = ranked.filter((x, i) => i === 0 || (i === 1 && x.sc >= ranked[0].sc * 0.75));
+  let stats = ranked.filter((x, i) => i === 0 || (i === 1 && x.sc >= ranked[0].sc * 0.75));
+  /* Un seul mot commun ne suffit pas : si le chiffre trouvé couvre moins d'un tiers
+     des mots de la phrase, le sujet est probablement hors des données de l'app. */
+  const uniq = [...new Set(ws)];
+  if (stats.length && uniq.length) {
+    const s0 = stats[0].s, hay = norm([s0.t, s0.k, s0.themeNom, s0.c].join(" "));
+    if (uniq.filter(w => hay.includes(w)).length / uniq.length < 0.34) stats = [];
+  }
   const themeIds = new Set(stats.map(x => x.s.theme));
 
   const measures = [];
@@ -259,12 +266,19 @@ function renderAnalysis(a){
     parts.push(`<p class="note"><b>Formule de record.</b> « Jamais », « record » ou « explose » se vérifient sur une période précise : regardez depuis quand le niveau est atteint et en euros ou en pourcentage.</p>`);
   }
   if (!parts.length) {
-    parts.push(`<p class="small">Aucun chiffre ni candidat de l'app ne correspond à cette phrase. Essayez avec un mot-clé du sujet (dette, chômage, immigrés, homicides…) ou consultez les sources officielles en bas de page.</p>`);
+    const q = $("#claim").value.trim();
+    const fc = "https://www.google.com/search?q=" + encodeURIComponent(q + " (site:factuel.afp.com OR site:lemonde.fr/les-decodeurs OR site:liberation.fr/checknews OR site:francetvinfo.fr/vrai-ou-fake)");
+    const ai = "https://claude.ai/new?q=" + encodeURIComponent("Vérifie cette affirmation entendue dans un débat politique. Dis si elle est exacte, imprécise ou fausse, d'où vient le chiffre, et donne tes sources : « " + q + " »");
+    parts.push(`<div class="r-sec"><h3>Hors des données de l'app</h3>
+      <p class="small">Ce sujet ne fait pas partie des sept thèmes de l'app (${esc(THEMES.map(t => t.nom.toLowerCase()).join(", "))}). Pour le vérifier ailleurs :</p>
+      <div class="refs"><a class="ref" href="${esc(fc)}" target="_blank" rel="noopener">Chercher chez les fact-checkeurs</a><a class="ref" id="askAi" href="${esc(ai)}" target="_blank" rel="noopener">Demander à Claude</a></div></div>`);
   } else {
     parts.push(`<p class="disc">Comparaison automatique à partir des données de l'app, mises à jour le ${esc(DATA_DATE)}. Ouvrez la source avant de reprendre un chiffre.</p>`);
   }
   r.innerHTML = parts.join("");
   r.querySelectorAll("[data-s]").forEach(el => el.onclick = ev => { ev.preventDefault(); focusStat(el.dataset.s); });
+  const ask = r.querySelector("#askAi");
+  if (ask) ask.addEventListener("click", () => { navigator.clipboard?.writeText($("#claim").value.trim()).catch(() => {}); });
 }
 
 function check(){

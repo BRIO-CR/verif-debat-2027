@@ -1,7 +1,7 @@
 /* Service worker : l'app reste utilisable hors ligne.
    Les fichiers de l'app passent par le réseau d'abord (pour recevoir les mises à jour),
    puis par le cache si le téléphone est hors ligne. */
-const CACHE = "vd27-v1";
+const CACHE = "vd27-v2";
 const APP_FILES = ["./", "index.html", "styles.css", "data.js", "app.js", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
