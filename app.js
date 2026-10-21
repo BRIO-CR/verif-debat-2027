@@ -265,15 +265,18 @@ function renderAnalysis(a){
   if (a.record && a.stats.length) {
     parts.push(`<p class="note"><b>Formule de record.</b> « Jamais », « record » ou « explose » se vérifient sur une période précise : regardez depuis quand le niveau est atteint et en euros ou en pourcentage.</p>`);
   }
+  const q = $("#claim").value.trim();
+  const fc = "https://www.google.com/search?q=" + encodeURIComponent(q + " (site:factuel.afp.com OR site:lemonde.fr/les-decodeurs OR site:liberation.fr/checknews OR site:francetvinfo.fr/vrai-ou-fake)");
+  const ai = "https://claude.ai/new?q=" + encodeURIComponent("Vérifie cette affirmation entendue dans un débat de la présidentielle 2027, en cherchant les données les plus récentes. Donne un verdict (exact, imprécis, trompeur ou faux), explique d'où vient le chiffre et ce qui est déformé, et cite tes sources. Reste neutre vis-à-vis des candidats. Affirmation : « " + q + " »");
+  const links = `<div class="refs"><a class="ref" id="askAi" href="${esc(ai)}" target="_blank" rel="noopener">Demander à Claude</a><a class="ref" href="${esc(fc)}" target="_blank" rel="noopener">Chercher chez les fact-checkeurs</a></div>`;
+  const online = navigator.onLine !== false;
   if (!parts.length) {
-    const q = $("#claim").value.trim();
-    const fc = "https://www.google.com/search?q=" + encodeURIComponent(q + " (site:factuel.afp.com OR site:lemonde.fr/les-decodeurs OR site:liberation.fr/checknews OR site:francetvinfo.fr/vrai-ou-fake)");
-    const ai = "https://claude.ai/new?q=" + encodeURIComponent("Vérifie cette affirmation entendue dans un débat politique. Dis si elle est exacte, imprécise ou fausse, d'où vient le chiffre, et donne tes sources : « " + q + " »");
     parts.push(`<div class="r-sec"><h3>Hors des données de l'app</h3>
-      <p class="small">Ce sujet ne fait pas partie des sept thèmes de l'app (${esc(THEMES.map(t => t.nom.toLowerCase()).join(", "))}). Pour le vérifier ailleurs :</p>
-      <div class="refs"><a class="ref" href="${esc(fc)}" target="_blank" rel="noopener">Chercher chez les fact-checkeurs</a><a class="ref" id="askAi" href="${esc(ai)}" target="_blank" rel="noopener">Demander à Claude</a></div></div>`);
+      <p class="small">Ce sujet ne fait pas partie des sept thèmes de l'app (${esc(THEMES.map(t => t.nom.toLowerCase()).join(", "))}).${online ? " Pour le vérifier :" : " Reconnectez-vous pour le vérifier avec Claude ou chez les fact-checkeurs."}</p>
+      ${online ? links : ""}</div>`);
   } else {
     parts.push(`<p class="disc">Comparaison automatique à partir des données de l'app, mises à jour le ${esc(DATA_DATE)}. Ouvrez la source avant de reprendre un chiffre.</p>`);
+    if (online) parts.push(`<div class="r-sec"><h3>Pour un verdict complet et sourcé</h3>${links}</div>`);
   }
   r.innerHTML = parts.join("");
   r.querySelectorAll("[data-s]").forEach(el => el.onclick = ev => { ev.preventDefault(); focusStat(el.dataset.s); });
