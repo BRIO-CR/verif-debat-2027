@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vérif Débat 2027</title>
+<meta name="description" content="Chiffres officiels et propositions des candidats à la présidentielle 2027, pour vérifier ce qui se dit en débat.">
+<meta name="theme-color" content="#111830">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vérif 2027">
+<meta property="og:title" content="Vérif Débat 2027">
+<meta property="og:description" content="Les chiffres officiels et ce que proposent six candidats, thème par thème.">
+<meta property="og:image" content="icons/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Présidentielle 2027 · données au <span id="dataDate">20 octobre 2026</span></p>
+      <h1>Vérif<br><span class="mk">Débat</span> 2027</h1>
+      <p class="intro">Les chiffres officiels qui reviennent en débat, et ce que <b>six candidats</b> proposent sur chaque sujet. Chaque ligne renvoie à sa source.</p>
+      <div class="cands-row" id="candsRow"></div>
+      <div class="actions">
+        <button class="hbtn prime only-browser" id="installBtn" type="button" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+          Installer l'app
+        </button>
+        <button class="hbtn" id="shareBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0-4 4m4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+          Partager à des amis
+        </button>
+      </div>
+      <p class="ios-help" id="iosHelp" hidden>Sur iPhone : touchez <b>Partager</b> dans Safari, puis <b>Sur l'écran d'accueil</b>. L'app s'ouvrira ensuite en plein écran, même sans réseau.</p>
+    </div>
+    <div class="checker" id="verifier">
+      <h2>Vérifier une phrase entendue</h2>
+      <p class="sub">La phrase est comparée aux chiffres officiels et aux programmes enregistrés dans l'app. Le résultat montre les écarts ; la conclusion vous revient.</p>
+      <label for="claim" class="small">Affirmation</label>
+      <textarea id="claim" placeholder="Ex. : « La dette a dépassé les 3 600 milliards d'euros »"></textarea>
+      <div class="row">
+        <button class="btn" id="go" type="button">Comparer</button>
+        <span class="small">Fonctionne hors ligne</span>
+      </div>
+      <div class="ex" id="examples" aria-label="Exemples"></div>
+      <div class="result" id="result" hidden aria-live="polite"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Thèmes">
+  <div class="wrap">
+    <div class="tabs" id="tabs"></div>
+    <input class="search" id="q" type="search" placeholder="Rechercher…" aria-label="Rechercher dans les chiffres et propositions">
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+  <div class="filter">
+    <span class="lbl">Candidats affichés</span>
+    <div class="ctog" id="ctog" role="group" aria-label="Afficher ou masquer un candidat"></div>
+  </div>
+  <div id="themes"></div>
+  <p class="empty" id="noHit" hidden>Rien ne correspond à cette recherche. Essayez un autre mot.</p>
+
+  <section class="block" id="pieges" aria-labelledby="h-pieges">
+    <h2 id="h-pieges">Les confusions qui reviennent</h2>
+    <p class="lede">La plupart des chiffres contestés ne sont pas inventés. Ils sont sortis de leur périmètre, de leur date ou de leur définition.</p>
+    <ul class="traps" id="traps"></ul>
+  </section>
+
+  <section class="block" id="sources" aria-labelledby="h-sources">
+    <h2 id="h-sources">Où vérifier soi-même</h2>
+    <p class="lede">Remontez toujours à la publication d'origine plutôt qu'à l'article qui la cite.</p>
+    <div class="sources">
+      <div><h3>Statistique publique</h3><ul id="srcOff"></ul></div>
+      <div><h3>Programmes des candidats</h3><ul id="srcProg"></ul></div>
+      <div><h3>Rubriques de fact-checking</h3><ul id="srcFc"></ul></div>
+    </div>
+  </section>
+
+  <div class="method">
+    <p><b>Méthode.</b> Les chiffres viennent des publications officielles (Insee, ministères, COR, Citepa, RTE, Douanes). Les propositions viennent des programmes publiés par les candidats et de leurs déclarations rapportées par la presse ; chaque ligne indique sa source et sa date. Les candidats sont classés par ordre alphabétique et présentés sous la même forme.</p>
+    <p>Les programmes sont encore en cours de publication. « Pas de mesure précise trouvée » signifie que les sources consultées n'en donnent pas, pas que le candidat n'a pas de position. Pour le RN, certaines mesures proviennent du programme de 2022 que le parti affiche encore ; elles sont signalées comme telles.</p>
+    <p>Le comparateur rapproche automatiquement une phrase des données de l'app : il repère le sujet, le chiffre officiel le plus proche et l'écart. Il ne donne aucun avis sur les candidats ni sur la valeur de leurs propositions.</p>
+  </div>
+</div>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
